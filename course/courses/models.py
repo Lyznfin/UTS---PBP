@@ -9,6 +9,9 @@ class Instructor(models.Model):
     username = models.CharField(max_length = 25, unique = True)
     youtube = models.URLField(max_length = 100, unique = True)
 
+    def __str__(self):
+        return f"{self.username}"
+
 class CourseCategory(models.Model):
     class Categories(models.TextChoices):
         PYTHON = 'PY', _('Python')
@@ -42,37 +45,46 @@ class CourseCategory(models.Model):
         UI_UX = 'UIUX', _('UI/UX Design')
         DATABASES = 'DB', _('Databases')
         SECURITY = 'SEC', _('Cyber Security')
-    category = models.Choices(max_length = 4, choices = Categories.choices)
+    category = models.CharField(max_length = 4, choices = Categories.choices)
+
+    def __str__(self):
+        return f"{self.category}"
 
 class Course(models.Model):
-    class PaidTypes(models.TextChoices):
-        PAID = 'P', _('Paid')
-        FREE = 'F', _('Free')
     instructor = models.ForeignKey(Instructor, on_delete = models.CASCADE)
     title = models.CharField(max_length = 50, unique = True)
-    description = models.TextField(max_length = 500)
+    description = models.TextField(max_length = 300)
     slug = models.SlugField(unique = True, db_index = True)
     categories = models.ManyToManyField(CourseCategory)
-    paid_type = models.Choices(max_length = 1, choices=PaidTypes.choices)
+    is_free = models.BooleanField()
 
     def save(self, *args, **kwargs) -> None:
         self.slug = slugify(self.title)
         return super().save(*args, **kwargs)
     
     def get_absolute_url(self):
-        return reverse("course-detail", kwargs={"slug": self.slug})
+        return reverse("course-detail", kwargs = {"slug": self.slug})
+    
+    def __str__(self):
+        return f"{self.title}"
 
 class CoursePrice(models.Model):
-    course = models.OneToOneField(Course, on_delete=models.CASCADE)
+    course = models.OneToOneField(Course, on_delete = models.CASCADE)
         #price boong boongan, wkwkwk
-    price = models.DecimalField(validators=[MinValueValidator(0)])
+    price = models.DecimalField(decimal_places = 2, max_digits = 8, validators=[MinValueValidator(0)])
+
+    def __str__(self):
+        return f"{self.course}: {self.price}"
 
 class CourseSection(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    title = models.CharField(max_length = 50)
-    pointer = models.TextField() # -> embedded yt video
+    section = models.CharField(max_length = 50)
+    pointer = models.TextField(max_length = 200) # -> embedded yt video
 
     def get_absolute_url(self):
         #slugnya pake pk ae lh
         return reverse("section-detail", kwargs={"pk": self.pk})
+    
+    def __str__(self):
+        return f"{self.section}"
     
