@@ -45,7 +45,7 @@ class CourseCategory(models.Model):
         UI_UX = 'UIUX', _('UI/UX Design')
         DATABASES = 'DB', _('Databases')
         SECURITY = 'SEC', _('Cyber Security')
-    category = models.CharField(max_length = 4, choices = Categories.choices)
+    category = models.CharField(max_length = 4, choices = Categories.choices, unique = True)
 
     def __str__(self):
         return f"{self.category}"
