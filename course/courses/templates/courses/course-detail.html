@@ -17,7 +17,7 @@
         <li>Sections: </li>
         <ul>
         {% for section in course.coursesection_set.all %}
-            <a href="{% url "course-section" section.pk %}"><li>{{ section.section }}</li></a>
+            <a href="{% url "course-section" slug=course.slug pk=section.pk %}"><li>{{ section.section }}</li></a>
         {% endfor %}
         </ul>
     </ul>
