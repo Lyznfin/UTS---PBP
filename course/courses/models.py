@@ -45,11 +45,15 @@ class CourseCategory(models.Model):
     category = models.Choices(max_length = 4, choices = Categories.choices)
 
 class Course(models.Model):
+    class PaidTypes(models.TextChoices):
+        PAID = 'P', _('Paid')
+        FREE = 'F', _('Free')
     instructor = models.ForeignKey(Instructor, on_delete = models.CASCADE)
     title = models.CharField(max_length = 50, unique = True)
     description = models.TextField(max_length = 500)
     slug = models.SlugField(unique = True, db_index = True)
     categories = models.ManyToManyField(CourseCategory)
+    paid_type = models.Choices(max_length = 1, choices=PaidTypes.choices)
 
     def save(self, *args, **kwargs) -> None:
         self.slug = slugify(self.title)
@@ -57,14 +61,6 @@ class Course(models.Model):
     
     def get_absolute_url(self):
         return reverse("course-detail", kwargs={"slug": self.slug})
-
-#ini bingung mau ditaro langsung ke table course atau dipisah
-class CoursePaidType(models.Model):
-    class PaidTypes(models.TextChoices):
-        PAID = 'P', _('Paid')
-        FREE = 'F', _('Free')
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    paid_type = models.Choices(max_length=1, choices=PaidTypes.choices)
 
 class CoursePrice(models.Model):
     course = models.OneToOneField(Course, on_delete=models.CASCADE)
