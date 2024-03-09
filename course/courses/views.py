@@ -1,12 +1,17 @@
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import ListView, DetailView
+from .models import Course, CourseSection
 
 class Index(ListView):
-    pass
+    template_name = 'courses/index.html'
+    model = Course
+    context_object_name = 'courses'
 
 class DetailCourse(DetailView):
-    pass
+    template_name = 'courses/course-detail.html'
+    model = Course
 
-class CourseSections(ListView):
-    pass
+class CourseSections(DetailView):
+    template_name = 'courses/course-section.html'
+    model = CourseSection

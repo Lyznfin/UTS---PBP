@@ -91,7 +91,7 @@ class CoursePrice(models.Model):
         if self.paid_type == 'F':
             return 'Free'
         else:
-            return self.price
+            return f'{self.price}$'
 
     def __str__(self):
         return f"{self.course}: {self.get_price()}"
@@ -103,7 +103,7 @@ class CourseSection(models.Model):
 
     def get_absolute_url(self):
         #slugnya pake pk ae lh
-        return reverse("section-detail", kwargs={"pk": self.pk})
+        return reverse("course-section", kwargs={"pk": self.pk})
     
     def __str__(self):
         return f"{self.section}"

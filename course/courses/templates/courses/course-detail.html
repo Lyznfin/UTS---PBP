@@ -1,0 +1,24 @@
+{% extends "courses/base.html" %}
+
+{% block title %} {{ course.title }} {% endblock title %}
+
+{% block content %}
+    <ul>
+        <li>Instructor: {{ course.instructor }}</li>
+        <li>Title: {{ course.title }}</li>
+        <li>Description: {{ course.description }}</li>
+        <li>Price: {{ course.courseprice.get_price }}</li>
+        <li>Categories: </li>
+        <ul>
+        {% for category in course.categories.all %}
+            <li>{{ category.get_category_name }}</li>
+        {% endfor %}
+        </ul>
+        <li>Sections: </li>
+        <ul>
+        {% for section in course.coursesection_set.all %}
+            <a href="{% url "course-section" section.pk %}"><li>{{ section.section }}</li></a>
+        {% endfor %}
+        </ul>
+    </ul>
+{% endblock content %}
