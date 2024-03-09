@@ -3,6 +3,7 @@ from django.core.validators import MinValueValidator
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 class Instructor(models.Model):
@@ -45,18 +46,21 @@ class CourseCategory(models.Model):
         UI_UX = 'UIUX', _('UI/UX Design')
         DATABASES = 'DB', _('Databases')
         SECURITY = 'SEC', _('Cyber Security')
+        NO_SQL = 'NSQL', _('No SQL')
     category = models.CharField(max_length = 4, choices = Categories.choices, unique = True)
 
+    def get_category_name(self):
+        return dict(self.Categories.choices)[self.category]
+
     def __str__(self):
-        return f"{self.category}"
+        return str(self.get_category_name())
 
 class Course(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete = models.CASCADE)
     title = models.CharField(max_length = 50, unique = True)
     description = models.TextField(max_length = 300)
-    slug = models.SlugField(unique = True, db_index = True)
+    slug = models.SlugField(default='', blank=True, unique = True, db_index = True)
     categories = models.ManyToManyField(CourseCategory)
-    is_free = models.BooleanField()
 
     def save(self, *args, **kwargs) -> None:
         self.slug = slugify(self.title)
@@ -70,16 +74,32 @@ class Course(models.Model):
 
 class CoursePrice(models.Model):
     course = models.OneToOneField(Course, on_delete = models.CASCADE)
-        #price boong boongan, wkwkwk
-    price = models.DecimalField(decimal_places = 2, max_digits = 8, validators=[MinValueValidator(0)])
+    paid_type = models.CharField(max_length=1, choices = [('F', 'Free'), ('P', 'Paid')], default='F')
+    price = models.DecimalField(decimal_places = 2, max_digits = 8, validators=[MinValueValidator(0)], default = 0)
+
+    def clean(self):
+        if self.paid_type == 'F' and self.price != 0:
+            raise ValidationError('Price must be 0 for a free course')
+        elif self.paid_type == 'P' and self.price == 0:
+            raise ValidationError('Price must be set for a paid course')
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    def get_price(self):
+        if self.paid_type == 'F':
+            return 'Free'
+        else:
+            return self.price
 
     def __str__(self):
-        return f"{self.course}: {self.price}"
+        return f"{self.course}: {self.get_price()}"
 
 class CourseSection(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     section = models.CharField(max_length = 50)
-    pointer = models.TextField(max_length = 200) # -> embedded yt video
+    pointer = models.TextField(max_length = 400) # -> embedded yt video
 
     def get_absolute_url(self):
         #slugnya pake pk ae lh
