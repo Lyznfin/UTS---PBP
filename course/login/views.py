@@ -1,9 +1,16 @@
 from django.shortcuts import render, redirect
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
 from .forms import RegistrationForm
 
+#@login_required(login_url='/login')
+#def home(request):
+#    return render(request, 'login/home.html')
+
 class Home(View):
+    @method_decorator(login_required(login_url='/login'))
     def get(self, request):
         return render(request, 'login/home.html')
     
