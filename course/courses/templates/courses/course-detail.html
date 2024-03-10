@@ -3,38 +3,25 @@
 {% block title %} {{ course.title }} {% endblock title %}
 
 {% block content %}
-    <ul>
-        <li>By {{ course.instructor }}</li>
-        <li>{{ course.title }}</li>
-        <li>Price: {{ course.courseprice.get_price }}</li>
-        <li>Categories: </li>
-        <ul>
-        {% for category in course.categories.all %}
-            <li>{{ category.get_category_name }}</li>
-        {% endfor %}
-        </ul>
-        <div class="list-group w-25">
-        {% for section in course.coursesection_set.all %}
-            <a href="{% url "course-section" slug=course.slug pk=section.pk %}" class="list-group-item list-group-item-action">{{ section.section }}</a>
-        {% endfor %}
+<div class="container d-flex justify-content-center align-items-center" style="margin-top: 10vh;">
+    <div class="card p-4">
+        <div class="card-body">
+            <p>By {{ course.instructor }}</p>
+            <h2>{{ course.title }}</h2>
+            <p>Price: {{ course.courseprice.get_price }}</p>
+            <h4>Categories:</h4>
+            <ul class="list-group list-group-horizontal">
+                {% for category in course.categories.all %}
+                    <li class="list-group-item">{{ category.get_category_name }}</li>
+                {% endfor %}
+            </ul>
+            <h4>Sections:</h4>
+            <div class="list-group w-50">
+                {% for section in course.coursesection_set.all %}
+                    <a href="{% url "course-section" slug=course.slug pk=section.pk %}" class="list-group-item list-group-item-action border-bottom">{{ section.section }}</a>
+                {% endfor %}
+            </div>
         </div>
-        <!--
-<div class="list-group">
-  <a href="#" class="list-group-item list-group-item-action active">
-    Cras justo odio
-  </a>
-  <a href="#" class="list-group-item list-group-item-action">Dapibus ac facilisis in</a>
-  <a href="#" class="list-group-item list-group-item-action">Morbi leo risus</a>
-  <a href="#" class="list-group-item list-group-item-action">Porta ac consectetur ac</a>
-  <a href="#" class="list-group-item list-group-item-action disabled">Vestibulum at eros</a>
+    </div>
 </div>
-
-        <li>Sections: </li>
-        <ul>
-        {% for section in course.coursesection_set.all %}
-            <a href="{% url "course-section" slug=course.slug pk=section.pk %}" ><li>{{ section.section }}</li></a>
-        {% endfor %}
-        </ul>
-        -->
-    </ul>
 {% endblock content %}
