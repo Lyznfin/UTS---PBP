@@ -5,6 +5,7 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 class Instructor(models.Model):
     username = models.CharField(max_length = 25, unique = True)
@@ -71,6 +72,22 @@ class Course(models.Model):
     
     def __str__(self):
         return f"{self.title}"
+
+class UserCourse(models.Model):
+    class Meta:
+        unique_together = ['user', 'course']
+
+    user = models.OneToOneField(User, on_delete = models.CASCADE)
+    course = models.ForeignKey(Course, on_delete = models.CASCADE)
+    date_added = models.DateField(auto_now_add = True)
+    completion = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+
+    def __str__(self):
+        return f'{self.user.username}: {self.course.title}'
+
+#class UserCourses(models.Model):
+#    user = models.ForeignKey(User, on_delete = models.CASCADE)
+#    course = models.ForeignKey()
 
 class CoursePrice(models.Model):
     course = models.OneToOneField(Course, on_delete = models.CASCADE)
