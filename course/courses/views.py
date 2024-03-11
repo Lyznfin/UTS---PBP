@@ -10,7 +10,7 @@ class Index(ListView):
     template_name = 'courses/index.html'
     model = Course
     context_object_name = 'courses'
-    paginate_by = 1
+    paginate_by = 3
 
 class DetailCourse(DetailView):
     template_name = 'courses/course-detail.html'
