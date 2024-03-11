@@ -27,16 +27,7 @@ class DetailCourse(DetailView):
     template_name = 'courses/course-detail.html'
     model = Course
 
-#class CourseSections(DetailView, LoginRequiredMixin):
-#    template_name = 'courses/course-section.html'
-#    model = CourseSection
-
-@method_decorator(login_required(login_url='/login'), name='dispatch')
-class CourseSections(View):
-    def post(self):
-        pass
-    
-    #@method_decorator(login_required(login_url='/login'))
-    def get(self, request, pk, slug):
-        section = CourseSection.objects.get(pk=pk)
-        return render(request, 'courses/course-section.html', {'object': section})
+@method_decorator(login_required(login_url='/login' + '?need_account=true'), name='dispatch')
+class CourseSections(DetailView):
+    template_name = 'courses/course-section.html'
+    model = CourseSection

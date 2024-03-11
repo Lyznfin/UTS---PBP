@@ -3,10 +3,46 @@
 {% block title %} All Courses {% endblock title %}
 
 {% block content %}
-<div class="container d-flex flex-column p-2">
-    {% for course in courses %}
-        {% include "courses/bits/course-preview.html" %}
-    {% endfor %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-3 p-2 mt-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Duration: </h5>
+                    <form>
+                        <div class="mb-3">
+                        {% for i in '12345' %}
+                            {% include "courses/bits/category-bits.html" %}
+                        {% endfor %}
+                        </div>
+                    </form>
+                    <hr class="my-4">
+                    <h5 class="card-title">Paid Type: </h5>
+                    <form>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="free">
+                                <label class="form-check-label" for="free">
+                                    Free Courses
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="paid">
+                                <label class="form-check-label" for="paid">
+                                    Paid Courses
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-9 d-flex flex-column p-2">
+            {% for course in courses %}
+                {% include "courses/bits/course-preview.html" %}
+            {% endfor %}
+        </div>
+    </div>
 </div>
 {% include "courses/bits/pagination.html" %}
 {% endblock content %}
