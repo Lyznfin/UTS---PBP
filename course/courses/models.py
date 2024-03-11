@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -61,8 +61,8 @@ class Course(models.Model):
     title = models.CharField(max_length = 50, unique = True)
     description = models.TextField(max_length = 300)
     slug = models.SlugField(default='', blank=True, unique = True, db_index = True)
-    #duration = models.DurationField(default=timezone.timedelta(hours=1))
-    #published = models.DateField(default=timezone.now)
+    duration = models.DurationField()
+    published = models.DateField(default=timezone.now)
     categories = models.ManyToManyField(CourseCategory)
 
     def save(self, *args, **kwargs) -> None:
@@ -83,6 +83,7 @@ class UserCourse(models.Model):
     course = models.ForeignKey(Course, on_delete = models.CASCADE)
     date_added = models.DateField(auto_now_add = True)
     completion = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    rating = models.FloatField(validators=[MinValueValidator(0), MaxValueValidator(5)])
 
     def __str__(self):
         return f'{self.user.username}: {self.course.title}'

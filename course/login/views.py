@@ -10,9 +10,8 @@ from .forms import RegistrationForm
 #    return render(request, 'login/home.html')
 
 class Home(View):
-    #@method_decorator(login_required(login_url='/login'))
     def get(self, request):
-        return render(request, 'login/home.html')
+        return redirect('/courses')
     
 class SignUp(View):
     def post(self, request):

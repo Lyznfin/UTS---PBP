@@ -12,6 +12,17 @@ class Index(ListView):
     context_object_name = 'courses'
     paginate_by = 3
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        for course in context['courses']:
+            # Calculate hours and minutes
+            total_seconds = course.duration.total_seconds()
+            hours = int(total_seconds // 3600)
+            minutes = int((total_seconds % 3600) // 60)
+            course.duration_hours = hours
+            course.duration_minutes = minutes
+        return context
+
 class DetailCourse(DetailView):
     template_name = 'courses/course-detail.html'
     model = Course
