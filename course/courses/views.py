@@ -1,10 +1,13 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.views import View
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from .models import Course, CourseSection
+from .models import Course, CourseSection, UserCourse
+from .forms import UserCourseForm
+from django.contrib import messages
 
 class Index(ListView):
     template_name = 'courses/index.html'
@@ -15,7 +18,6 @@ class Index(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         for course in context['courses']:
-            # Calculate hours and minutes
             total_seconds = course.duration.total_seconds()
             hours = int(total_seconds // 3600)
             minutes = int((total_seconds % 3600) // 60)
@@ -31,3 +33,20 @@ class DetailCourse(DetailView):
 class CourseSections(DetailView):
     template_name = 'courses/course-section.html'
     model = CourseSection
+
+@method_decorator(login_required(login_url='/login' + '?need_account=true'), name='dispatch')
+class AddUserCourse(View):
+    def post(self, request, slug):
+        form = UserCourseForm(request.POST)
+        if form.is_valid():
+            try:
+                course = form.save(commit=False)
+                course_object = Course.objects.get(pk=request.POST.get('course-id'))
+                course.course = course_object
+                course.user = request.user
+                course.save()
+                messages.success(request, 'Course has been successfully added!')
+            except:
+                messages.error(request, 'Course is failed to be added!')
+            return redirect(reverse('course-detail', kwargs={'slug':slug}))
+        return redirect(reverse('course-detail', kwargs={'slug':slug}))

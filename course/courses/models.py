@@ -79,11 +79,10 @@ class UserCourse(models.Model):
     class Meta:
         unique_together = ['user', 'course']
 
-    user = models.OneToOneField(User, on_delete = models.CASCADE)
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
     course = models.ForeignKey(Course, on_delete = models.CASCADE)
     date_added = models.DateField(auto_now_add = True)
     completion = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
-    rating = models.FloatField(validators=[MinValueValidator(0), MaxValueValidator(5)])
 
     def __str__(self):
         return f'{self.user.username}: {self.course.title}'
