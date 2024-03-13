@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container mt-2">
-    <div class="card bg-dark p-2">
+    <div class="card card bg-dark p-2 position-relative">
         <div class="card-body">
             <h2>{{ course.title }}</h2>
             <h5 class="card-text">Instructor: <a href="{{ course.instructor.youtube }}" target="_blank" class="text-decoration-none">{{ course.instructor }}</a></h5>
@@ -14,17 +14,21 @@
                     <li class="list-group-item">{{ category.get_category_name }}</li>
                 {% endfor %}
             </ul>
-            <form action="{% url "course-detail" course.slug %}/add" method="POST" class="mt-2">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-primary bg-dark" name="course-id" value="{{ course.pk }}">Add Course</button>
-            </form>
         </div>
+        {% if not user_added_course %}
+        <form action="{% url "course-detail" course.slug %}/add" method="POST" class="position-absolute top-0 end-0 m-4">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary bg-dark" name="course-id" value="{{ course.pk }}"><i class="bi bi-bookmarks"></i> Add Course</button>
+        </form>
+        {% endif %}
     </div>
+    {% if user_added_course %}
     <div class="list-group w-25 mt-4">
         {% for section in course.coursesection_set.all %}
             <a href="{% url "course-section" slug=course.slug pk=section.pk %}" class="list-group-item list-group-item-action border-bottom">{{ section.section }}</a>
         {% endfor %}
     </div>
+    {% endif %}
 </div>
 
 <script>

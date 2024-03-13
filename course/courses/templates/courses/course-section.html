@@ -14,6 +14,12 @@
                     <li class="list-group-item">{{ category.get_category_name }}</li>
                 {% endfor %}
             </ul>
+            {% if not user_added_course %}
+            <form action="{% url "course-detail" object.course.slug %}/add" method="POST" class="mt-2">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary bg-dark" name="course-id" value="{{ object.course.pk }}">Add Course</button>
+            </form>
+            {% endif %}
         </div>
     </div>
     <div class="row">

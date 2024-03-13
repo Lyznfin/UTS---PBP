@@ -75,14 +75,29 @@ class Course(models.Model):
     def __str__(self):
         return f"{self.title}"
 
+class CourseSection(models.Model):
+    class Meta:
+        unique_together = ('course', 'section')
+
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    section = models.CharField(max_length = 50)
+    pointer = models.TextField(max_length = 400) # -> embedded yt video
+
+    def get_absolute_url(self):
+        #slugnya pake pk ae lh
+        return reverse("course-section", kwargs={"pk": self.pk})
+    
+    def __str__(self):
+        return f"{self.section}"
+
 class UserCourse(models.Model):
     class Meta:
-        unique_together = ['user', 'course']
+        unique_together = ('user', 'course')
 
-    user = models.ForeignKey(User, on_delete = models.CASCADE)
-    course = models.ForeignKey(Course, on_delete = models.CASCADE)
-    date_added = models.DateField(auto_now_add = True)
-    completion = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    date_added = models.DateField(auto_now_add=True)
+    completed_section = models.ManyToManyField(CourseSection, blank=True)
 
     def __str__(self):
         return f'{self.user.username}: {self.course.title}'
@@ -111,15 +126,4 @@ class CoursePrice(models.Model):
     def __str__(self):
         return f"{self.course}: {self.get_price()}"
 
-class CourseSection(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    section = models.CharField(max_length = 50)
-    pointer = models.TextField(max_length = 400) # -> embedded yt video
 
-    def get_absolute_url(self):
-        #slugnya pake pk ae lh
-        return reverse("course-section", kwargs={"pk": self.pk})
-    
-    def __str__(self):
-        return f"{self.section}"
-    
