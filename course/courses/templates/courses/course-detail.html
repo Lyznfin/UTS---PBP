@@ -16,9 +16,18 @@
             </ul>
         </div>
         {% if not user_added_course %}
-        <form action="{% url "course-detail" course.slug %}/add" method="POST" class="position-absolute top-0 end-0 m-4">
+        <form action="{% url "add-course" course.slug %}" method="POST" class="position-absolute top-0 end-0 m-4">
             {% csrf_token %}
-            <button type="submit" class="btn btn-primary bg-dark" name="course-id" value="{{ course.pk }}"><i class="bi bi-bookmarks"></i> Add Course</button>
+            <button type="submit" class="btn btn-primary bg-dark" name="course-id" value="{{ course.pk }}">
+                <i class="bi bi-bookmarks"></i> Add Course
+            </button>
+        </form>
+        {% else %}
+        <form action="{% url "delete-course" course.slug %}" method="POST" class="position-absolute top-0 end-0 m-4">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary" name="course-id" value="{{ course.pk }}">
+                <i class="bi bi-bookmarks-fill"></i> Remove Course
+            </button>
         </form>
         {% endif %}
     </div>
@@ -30,12 +39,4 @@
     </div>
     {% endif %}
 </div>
-
-<script>
-    $(document).ready(function() {
-        {% if messages %}
-            $('#successModal').modal('show');
-        {% endif %}
-    });
-</script>
 {% endblock content %}

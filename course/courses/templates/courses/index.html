@@ -11,27 +11,51 @@
                     <h5 class="card-title">Duration: </h5>
                     <form>
                         <div class="mb-3">
-                        {% for i in '12345' %}
-                            {% include "courses/bits/category-bits.html" %}
-                        {% endfor %}
+                            <div class="form-check cursor-pointer">
+                                <input class="form-check-input" type="checkbox" id="duration_1">
+                                <label class="form-check-label" for="duration_1">
+                                    &lt;30 mins
+                                </label>
+                            </div>
+                            <div class="form-check cursor-pointer">
+                                <input class="form-check-input" type="checkbox" id="duration_2">
+                                <label class="form-check-label" for="duration_2">
+                                    30-60 mins
+                                </label>
+                            </div>
+                            <div class="form-check cursor-pointer">
+                                <input class="form-check-input" type="checkbox" id="duration_3">
+                                <label class="form-check-label" for="duration_3">
+                                    1-2 hours
+                                </label>
+                            </div>
+                            <div class="form-check cursor-pointer">
+                                <input class="form-check-input" type="checkbox" id="duration_4">
+                                <label class="form-check-label" for="duration_4">
+                                    2-5 hours
+                                </label>
+                            </div>
+                            <div class="form-check cursor-pointer">
+                                <input class="form-check-input" type="checkbox" id="duration_5">
+                                <label class="form-check-label" for="duration_5">
+                                    5-10 hours
+                                </label>
+                            </div>
+                            <div class="form-check cursor-pointer">
+                                <input class="form-check-input" type="checkbox" id="duration_6">
+                                <label class="form-check-label" for="duration_6">
+                                    10+ hours
+                                </label>
+                            </div>
                         </div>
                     </form>
                     <hr class="my-4">
-                    <h5 class="card-title">Paid Type: </h5>
+                    <h5 class="card-title">Categories: </h5>
                     <form>
                         <div class="mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="free">
-                                <label class="form-check-label" for="free">
-                                    Free Courses
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="paid">
-                                <label class="form-check-label" for="paid">
-                                    Paid Courses
-                                </label>
-                            </div>
+                            {% for category in categories %}
+                                {% include "courses/bits/category-bits.html" %}
+                            {% endfor %}
                         </div>
                     </form>
                 </div>

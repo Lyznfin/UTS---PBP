@@ -58,7 +58,7 @@ class CourseCategory(models.Model):
 
 class Course(models.Model):
     instructor = models.ForeignKey(Instructor, on_delete = models.CASCADE)
-    title = models.CharField(max_length = 50, unique = True)
+    title = models.CharField(max_length = 100, unique = True)
     description = models.TextField(max_length = 300)
     slug = models.SlugField(default='', blank=True, unique = True, db_index = True)
     duration = models.DurationField()
@@ -80,7 +80,7 @@ class CourseSection(models.Model):
         unique_together = ('course', 'section')
 
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    section = models.CharField(max_length = 50)
+    section = models.CharField(max_length = 100)
     pointer = models.TextField(max_length = 400) # -> embedded yt video
 
     def get_absolute_url(self):
@@ -97,10 +97,20 @@ class UserCourse(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     date_added = models.DateField(auto_now_add=True)
-    completed_section = models.ManyToManyField(CourseSection, blank=True)
+    #completed_section = models.ManyToManyField(CourseSection, blank=True)
 
     def __str__(self):
         return f'{self.user.username}: {self.course.title}'
+
+class CompletedUserSection(models.Model):
+    class Meta:
+        unique_together = ('user', 'section')
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    section = models.ForeignKey(CourseSection, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.user.username}: {self.section.section}'
 
 class CoursePrice(models.Model):
     course = models.OneToOneField(Course, on_delete = models.CASCADE)
