@@ -5,9 +5,10 @@ from django.views.generic import ListView, DetailView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from .models import Course, CourseSection, UserCourse, CourseCategory
-from django.http import JsonResponse
+from .forms import UserCourseForm
 from django.db.models import Q
 from django.contrib import messages
+from django.utils import timezone
 
 class Index(ListView):
     template_name = 'courses/index.html'
@@ -17,27 +18,35 @@ class Index(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        duration_filter = self.request.GET.getlist('duration')
+        durations = self.request.GET.getlist('duration')
 
-        if duration_filter:
-            q_objects = Q()
-            for duration in duration_filter:
-                if duration == '1':
-                    q_objects |= Q(duration__lt='00:30:00')
-                elif duration == '2':
-                    q_objects |= Q(duration__range=('00:30:00', '01:00:00'))
-                elif duration == '3':
-                    q_objects |= Q(duration__range=('01:00:00', '02:00:00'))
-                elif duration == '4':
-                    q_objects |= Q(duration__range=('02:00:00', '05:00:00'))
-                elif duration == '5':
-                    q_objects |= Q(duration__range=('05:00:00', '10:00:00'))
-                elif duration == '6':
-                    q_objects |= Q(duration__gte='10:00:00')
-                    
-            queryset = queryset.filter(q_objects)
-
+        if durations:
+            queryset = queryset.filter(self.get_duration_filter(durations))
+        
         return queryset
+
+    def get_duration_filter(self, durations):
+        duration_filters = []
+
+        for duration in durations:
+            if duration == '1':
+                duration_filters.append(Q(duration__lt=timezone.timedelta(minutes=30)))
+            elif duration == '2':
+                duration_filters.append(Q(duration__range=(timezone.timedelta(minutes=30), timezone.timedelta(minutes=60))))
+            elif duration == '3':
+                duration_filters.append(Q(duration__range=(timezone.timedelta(hours=1), timezone.timedelta(hours=2))))
+            elif duration == '4':
+                duration_filters.append(Q(duration__range=(timezone.timedelta(hours=2), timezone.timedelta(hours=5))))
+            elif duration == '5':
+                duration_filters.append(Q(duration__range=(timezone.timedelta(hours=5), timezone.timedelta(hours=10))))
+            elif duration == '6':
+                duration_filters.append(Q(duration__gte=timezone.timedelta(hours=10)))
+        
+        q_objects = Q()
+        for q_obj in duration_filters:
+            q_objects |= q_obj
+        
+        return q_objects
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -48,16 +57,12 @@ class Index(ListView):
             course.duration_hours = hours
             course.duration_minutes = minutes
         context['categories'] = self.get_all_category()
+        context['selected_durations'] = self.request.GET.getlist('duration')
         return context
     
     def get_all_category(self):
         list_category = CourseCategory.objects.all()
         return list_category
-    
-    def render_to_response(self, context, **response_kwargs):
-        if self.request.is_ajax():
-            return JsonResponse({'html': render_to_string('courses/course_list.html', context, request=self.request)})
-        return super().render_to_response(context, **response_kwargs)
 
 class DetailCourse(View):
     template_name = 'courses/course-detail.html'

@@ -9,49 +9,50 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Duration: </h5>
-                    <form>
+                    <form method="GET">
                         <div class="mb-3">
                             <div class="form-check cursor-pointer">
-                                <input class="form-check-input" type="checkbox" id="duration_1">
+                                <input class="form-check-input" type="checkbox" id="duration_1" name="duration" value="1" {% if '1' in selected_durations %} checked {% endif %}>
                                 <label class="form-check-label" for="duration_1">
                                     &lt;30 mins
                                 </label>
                             </div>
                             <div class="form-check cursor-pointer">
-                                <input class="form-check-input" type="checkbox" id="duration_2">
+                                <input class="form-check-input" type="checkbox" id="duration_2" name="duration" value="2" {% if '2' in selected_durations %} checked {% endif %}>
                                 <label class="form-check-label" for="duration_2">
                                     30-60 mins
                                 </label>
                             </div>
                             <div class="form-check cursor-pointer">
-                                <input class="form-check-input" type="checkbox" id="duration_3">
+                                <input class="form-check-input" type="checkbox" id="duration_3" name="duration" value="3" {% if '3' in selected_durations %} checked {% endif %}>
                                 <label class="form-check-label" for="duration_3">
                                     1-2 hours
                                 </label>
                             </div>
                             <div class="form-check cursor-pointer">
-                                <input class="form-check-input" type="checkbox" id="duration_4">
+                                <input class="form-check-input" type="checkbox" id="duration_4" name="duration" value="4" {% if '4' in selected_durations %} checked {% endif %}>
                                 <label class="form-check-label" for="duration_4">
                                     2-5 hours
                                 </label>
                             </div>
                             <div class="form-check cursor-pointer">
-                                <input class="form-check-input" type="checkbox" id="duration_5">
+                                <input class="form-check-input" type="checkbox" id="duration_5" name="duration" value="5" {% if '5' in selected_durations %} checked {% endif %}>
                                 <label class="form-check-label" for="duration_5">
                                     5-10 hours
                                 </label>
                             </div>
                             <div class="form-check cursor-pointer">
-                                <input class="form-check-input" type="checkbox" id="duration_6">
+                                <input class="form-check-input" type="checkbox" id="duration_6" name="duration" value="6" {% if '6' in selected_durations %} checked {% endif %}>
                                 <label class="form-check-label" for="duration_6">
                                     10+ hours
                                 </label>
                             </div>
                         </div>
-                    </form>
+                        <button type="submit" class="btn btn-primary">Apply Filter</button>
+                    </form>                    
                     <hr class="my-4">
                     <h5 class="card-title">Categories: </h5>
-                    <form>
+                    <form method="GET">
                         <div class="mb-3">
                             {% for category in categories %}
                                 {% include "courses/bits/category-bits.html" %}
