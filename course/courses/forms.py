@@ -1,5 +1,5 @@
 from django import forms
-from .models import UserCourse, CourseSection, Course
+from .models import UserCourse
 
 class UserCourseForm(forms.ModelForm):
     class Meta:
