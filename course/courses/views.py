@@ -16,8 +16,17 @@ class Index(ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         durations = self.request.GET.getlist('duration')
+        categories = self.request.GET.getlist('category')
         if durations:
             queryset = queryset.filter(self.get_duration_filter(durations))
+        elif categories:
+            queryset = queryset.filter(self.get_category_filter(categories))
+        elif durations and categories:
+            queries = [self.get_duration_filter(durations), self.get_category_filter(categories)]
+            all_query = Q()
+            for query in queries:
+                all_query |= query
+            queryset = queryset.filter(all_query)
         return queryset
 
     def get_duration_filter(self, durations):
@@ -37,6 +46,15 @@ class Index(ListView):
                 duration_filters.append(Q(duration__gte=timezone.timedelta(hours=10)))
         q_objects = Q()
         for q_obj in duration_filters:
+            q_objects |= q_obj
+        return q_objects
+    
+    def get_category_filter(self, categories):
+        category_filters = []
+        for category in categories:
+            category_filters.append(Q(categories__pk=category))
+        q_objects = Q()
+        for q_obj in category_filters:
             q_objects |= q_obj
         return q_objects
 
@@ -155,6 +173,8 @@ class UserCourses(ListView):
         usercourse = super().get_queryset()
         return usercourse.filter(user=self.request.user)    
 
+    #TODO: Correct this messy, inefficient query
+        #or not? idk, not that important for a simple CRUD tbh
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
@@ -162,7 +182,6 @@ class UserCourses(ListView):
         completed_sections = CompletedUserSection.objects.filter(user=user)
         completed_sections = [section.section.pk for section in completed_sections]
         for usercourse in usercourses:
-            print(usercourse)
             usercourse.total_sections = [section.get('pk') for section in usercourse.course.coursesection_set.values('pk')]
             usercourse.completed_sections = 0
             for section in usercourse.total_sections:
