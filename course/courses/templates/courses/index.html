@@ -39,13 +39,13 @@
                                 </label>
                             </div>
                             <div class="form-check cursor-pointer">
-                                <input class="form-check-input" type="checkbox" id="duration_5" name="duration" value="5">
+                                <input class="form-check-input" type="checkbox" id="duration_5" name="duration" value="5" {% if '5' in selected_durations %} checked {% endif %}>
                                 <label class="form-check-label" for="duration_5">
                                     5-10 hours
                                 </label>
                             </div>
                             <div class="form-check cursor-pointer">
-                                <input class="form-check-input" type="checkbox" id="duration_6" name="duration" value="6">
+                                <input class="form-check-input" type="checkbox" id="duration_6" name="duration" value="6" {% if '6' in selected_durations %} checked {% endif %}>
                                 <label class="form-check-label" for="duration_6">
                                     10+ hours
                                 </label>
@@ -55,7 +55,9 @@
                     <h5 class="card-title">Categories: </h5>
                         <div class="mb-3">
                             {% for category in categories %}
-                                {% include "courses/bits/category-bits.html" %}
+                                {% with selected_categories=selected_categories %}
+                                    {% include "courses/bits/category-bits.html"%}
+                                {% endwith %}
                             {% endfor %}
                         </div>
                     <button type="submit" class="btn btn-primary bg-dark border-light">Apply Filter</button>

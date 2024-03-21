@@ -13,20 +13,23 @@ class Index(ListView):
     context_object_name = 'courses'
     paginate_by = 7
 
+    def get_lists(self):
+        return self.request.GET.getlist('duration'), self.request.GET.getlist('category')
+
     def get_queryset(self):
         queryset = super().get_queryset()
-        durations = self.request.GET.getlist('duration')
-        categories = self.request.GET.getlist('category')
-        if durations:
-            queryset = queryset.filter(self.get_duration_filter(durations))
+        durations, categories = self.get_lists()
+
+        duration_filter = self.get_duration_filter(durations)
+        category_filter = self.get_category_filter(categories)
+
+        if durations and categories:
+            queryset = queryset.filter(duration_filter | category_filter)
+        elif durations:
+            queryset = queryset.filter(duration_filter)
         elif categories:
-            queryset = queryset.filter(self.get_category_filter(categories))
-        elif durations and categories:
-            queries = [self.get_duration_filter(durations), self.get_category_filter(categories)]
-            all_query = Q()
-            for query in queries:
-                all_query |= query
-            queryset = queryset.filter(all_query)
+            queryset = queryset.filter(category_filter)
+
         return queryset
 
     def get_duration_filter(self, durations):
@@ -67,7 +70,7 @@ class Index(ListView):
             course.duration_hours = hours
             course.duration_minutes = minutes
         context['categories'] = self.get_all_category()
-        context['selected_durations'] = self.request.GET.getlist('duration')
+        context['selected_durations'], context['selected_categories'] = self.get_lists()
         return context
     
     def get_all_category(self):
