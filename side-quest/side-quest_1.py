@@ -1,5 +1,5 @@
 #pyramid, lol
-n: int = 7
+n: int = 21
 for i in range(n):
     j = n + i
     k = n
