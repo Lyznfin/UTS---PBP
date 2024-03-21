@@ -40,12 +40,12 @@
                     <div class="d-flex align-items-center border m-0 p-0" style="border: none; background: none; padding: 0; cursor: pointer;">
                         <a href="{% url 'course-section' slug=course.slug pk=section.pk %}" class="list-group-item list-group-item-action p-2" style="border: none; display: flex; align-items: center;">
                             {% if section.pk in completed_sections %}
-                                <form action="{% url 'delete-section' slug=course.slug pk=section.pk %}" method="POST" class="section-form">
+                                <form action="{% url 'delete-section' slug=course.slug pk=section.pk %}" method="POST">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-link me-2 p-0"><i class="bi bi-check-square-fill"></i></button>
                                 </form>
                             {% else %}
-                                <form action="{% url 'add-section' slug=course.slug pk=section.pk %}" method="POST" class="section-form">
+                                <form action="{% url 'add-section' slug=course.slug pk=section.pk %}" method="POST">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-link me-2 p-0"><i class="bi bi-check-square"></i></button>
                                 </form>
